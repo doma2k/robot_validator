@@ -5,41 +5,32 @@ import (
 	"io"
 	"log"
 	"net/http"
-	// "os"
-	// "path/filepath"
 )
 
-const propsURL = "http://162.55.135.119:1317/cosmos/gov/v1beta1/proposals?proposal_status=PROPOSAL_STATUS_PASSED&pagination.limit=10&pagination.reverse=true"
-const propType = "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
+var (
+	api_addr  = "http://localhost:1317"
+	props_url = api_addr + "/cosmos/gov/v1beta1/proposals?proposal_status=PROPOSAL_STATUS_PASSED&pagination.limit=10&pagination.reverse=true"
+	repo_url  = "https://api.github.com/repos/cosmos/cosmos-sdk/releases/latest"
+	propType = "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
+)
 
-type Proposals struct {
-	Proposals []Proposal `json:"proposals"`
-}
-
-type Proposal struct {
-	ProposalID string `json:"proposal_id"`
-	Content    struct {
-		Type        string `json:"@type"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
-	} `json:"content"`
-	Status string `json:"status"`
-}
-
-func getProposals() {
-
-	resp, err := http.Get(propsURL)
+func fetchProposals(url string) []byte {
+	log.Println("Fetching proposals...")
+	resp, err := http.Get(url)
 	if err != nil {
 		log.Println(err)
 	}
 	defer resp.Body.Close()
-
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 	}
+	return body
+}
+
+func printProposals(body []byte) {
 	var proposals Proposals
-	err = json.Unmarshal(body, &proposals)
+	err := json.Unmarshal(body, &proposals)
 	if err != nil {
 		log.Fatalf("Error unmarshaling JSON: %v", err)
 	}
@@ -53,5 +44,8 @@ func getProposals() {
 }
 
 func main() {
-	getProposals()
+	printProposals(fetchProposals(props_url))
+	LatestRelease:=getLatestRelease(repo_url)
+	stagedBinaries:=getStagedBinaries()
+	log.Printf("%+v :%v \n",LatestRelease, stagedBinaries)
 }
