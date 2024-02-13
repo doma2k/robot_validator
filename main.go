@@ -47,11 +47,10 @@ func main() {
 	latest_release := internals.GetLatestRelease(repo_url)
 	proposa_status := queryProp(proposal_list, latest_release)
 	staged_binaries := internals.GetStagedBinaries()
-	log.Println("<<< Atomated Validation >>> ")
-	log.Println("-------------------------------------------------")
-	log.Printf("Cosmovisor staged binaries: %v\n", staged_binaries)
-	log.Println("-------------------------------------------------")
-	log.Printf("Elys/releases/latest: %v %v\n", latest_release.Tag_name, proposa_status)
-	log.Println("-------------------------------------------------")
-	log.Println("No upgrade needed")
+	valid_update := internals.BuildOtNotToBuilid(staged_binaries, latest_release.Tag_name, proposa_status)
+	if valid_update {
+		internals.BinaryBuild(latest_release.Tag_name)
+	} else {
+		log.Println("No valid update available")
+	}
 }

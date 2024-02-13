@@ -4,8 +4,8 @@
 
 Goals of project:
 
-* Create scalable autonomous robot Validator 😄
-* Apply and learn modularity of GO
-* ..... tbc
+- Create scalable autonomous robot Validator 😄
+- Apply and learn modularity of GO
+- ..... tbc
 
-![Alt text](./wda.png?raw=true "Title")
+![Alt text](img/wda.png?raw=true "Title")
