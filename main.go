@@ -11,7 +11,7 @@ import (
 
 var (
 	api_addr  = "http://localhost:1317"
-	props_url = api_addr + "/cosmos/gov/v1beta1/proposals?proposal_status=PROPOSAL_STATUS_PASSED&pagination.limit=10&pagination.reverse=true"
+	props_url = api_addr + "/cosmos/gov/v1beta1/proposals?proposal_status=PROPOSAL_STATUS_UNSPECIFIED&pagination.limit=10&pagination.reverse=true"
 	repo_url  = "https://api.github.com/repos/elys-network/elys/releases/latest"
 	propType  = "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
 )
