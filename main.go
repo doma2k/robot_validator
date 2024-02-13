@@ -5,72 +5,53 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
+	// "os"
+	// "path/filepath"
 )
 
-func getPath() string { 
-	home, err := os.UserHomeDir()
-    if err != nil {
-        log.Fatal(err)
-    }
-	path := filepath.Join(home, ".simapp")
+const propsURL = "http://162.55.135.119:1317/cosmos/gov/v1beta1/proposals?proposal_status=PROPOSAL_STATUS_PASSED&pagination.limit=10&pagination.reverse=true"
+const propType = "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
 
-	return path
+type Proposals struct {
+	Proposals []Proposal `json:"proposals"`
 }
 
-func getFiles(p string) []string {
-	upgrades := []string{}
-	files, err := os.ReadDir(p)
+type Proposal struct {
+	ProposalID string `json:"proposal_id"`
+	Content    struct {
+		Type        string `json:"@type"`
+		Title       string `json:"title"`
+		Description string `json:"description"`
+	} `json:"content"`
+	Status string `json:"status"`
+}
+
+func getProposals() {
+
+	resp, err := http.Get(propsURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
-	for _, file := range files {
-		log.Println(file.Name())
-		upgrades = append(upgrades, file.Name())
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
 	}
-	return upgrades
-}
-
-func getLatestRelease() string {
-    client := &http.Client{}
-    req, err := http.NewRequest("GET", "https://api.github.com/repos/elys-network/elys/releases", nil)
-    if err != nil {
-        log.Fatal(err)
-    }
-    req.Header.Set("Accept", "application/vnd.github.v3+json")
-    resp, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer resp.Body.Close()
-
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    var data interface{}
-    err = json.Unmarshal(body, &data)
-    if err != nil {
-        log.Fatal(err)
-    }
-	releaseLast := data.([]interface{})[0].(map[string]interface{})["tag_name"].(string)
-    return releaseLast
-}
-
-	func main() {
-		log.Println("Automated Validator")
-
-		db := getFiles(getPath())
-		lr := getLatestRelease()
-
-		for _, file := range db {
-			if file == lr {
-				log.Println("Latest Release Staged")
-				return
-			}
+	var proposals Proposals
+	err = json.Unmarshal(body, &proposals)
+	if err != nil {
+		log.Fatalf("Error unmarshaling JSON: %v", err)
+	}
+	for _, proposal := range proposals.Proposals {
+		if propType == proposal.Content.Type {
+			log.Printf("Proposal ID: %s\n", proposal.ProposalID)
+			log.Printf("Title: %s\n", proposal.Content.Title)
+			log.Printf("Status: %s\n", proposal.Status)
 		}
-		log.Println("Found new release :", lr)
-		log.Println("Building latest binary....")
 	}
+}
+
+func main() {
+	getProposals()
+}
