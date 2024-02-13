@@ -7,11 +7,11 @@ import (
 )
 
 func getStagedBinaries() []string {
-    home, err := os.UserHomeDir()
-    if err != nil {
-        log.Fatal(err)
-    }
-    path := filepath.Join(home, ".simapp")
+    // home, err := os.UserHomeDir()
+    // if err != nil {
+    //     log.Fatal(err)
+    // }
+    path := filepath.Join("/home/elys/", ".elys/cosmovisor/upgrades")
 
     upgrades := []string{}
     files, err := os.ReadDir(path)
@@ -19,7 +19,6 @@ func getStagedBinaries() []string {
         log.Fatal(err)
     }
     for _, file := range files {
-        log.Println(file.Name())
         upgrades = append(upgrades, file.Name())
     }
     return upgrades

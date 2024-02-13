@@ -8,7 +8,4 @@ Goals of project:
 * Apply and learn modularity of GO
 * ..... tbc
 
-TODO:
-
-* [ ] add env
-* [ ] add binary builder
+![Alt text](./wda.png?raw=true "Title")

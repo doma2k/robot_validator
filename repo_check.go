@@ -24,7 +24,6 @@ func getLatestRelease(url string) Release {
     if err != nil {
         log.Fatal(err)
     }
-
     var data Release
     err = json.Unmarshal(body, &data)
     if err != nil {
