@@ -43,14 +43,19 @@ func queryProp(body []byte, r types.Release) string {
 }
 
 func main() {
+	log.Println("Fetching proposals...")
 	proposal_list := fetchProposals(props_url)
+	log.Println("Geting lates release...")
 	latest_release := internals.GetLatestRelease(repo_url)
+	log.Println("Lates release:",latest_release)
 	proposa_status := queryProp(proposal_list, latest_release)
+	log.Println("Proposal status:",proposa_status)
 	staged_binaries := internals.GetStagedBinaries()
+	log.Println("Cosmovisor/upgrades",staged_binaries)
 	valid_update := internals.BuildOtNotToBuilid(staged_binaries, latest_release.Tag_name, proposa_status)
-	if valid_update {
+	if valid_update == false {
 		internals.BinaryBuild(latest_release.Tag_name)
 	} else {
-		log.Println("No valid update available")
+		log.Println("Binaries is aapp to date")
 	}
 }
