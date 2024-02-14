@@ -7,6 +7,7 @@ import (
 	"robot-validator/utils"
 	"robot-validator/internals"
 	"robot-validator/types"
+	"time"
 )
 
 var (
@@ -42,7 +43,7 @@ func queryProp(body []byte, r types.Release) string {
 	return status
 }
 
-func main() {
+func routine(t time.Time) {
 	log.Println("Fetching proposals...")
 	proposal_list := fetchProposals(props_url)
 	log.Println("Geting lates release...")
@@ -58,4 +59,19 @@ func main() {
 	} else {
 		log.Println("Binaries is aapp to date")
 	}
+}
+
+func main() {
+	log.Println("Program start...")
+	log.Println("-")
+    ticker := time.NewTicker(1 * time.Hour) // Set the interval here
+	log.Println("Timer set to 1 hour")
+    go func() {
+        for t := range ticker.C {
+            routine(t)
+        }
+		
+    }()
+
+    select {} 
 }
