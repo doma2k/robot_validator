@@ -6,15 +6,18 @@ import (
 	"os/exec"
 )
 
+var binary = "elys"
+var github_repo = "https://github.com/elys-network/elys.git"
+
 func BinaryBuild(version string) {
 	log.Println("Building the binary...")
 	cmds := []string{
-		"cd $HOME && rm -rf elys",
-		"cd $HOME && git clone https://github.com/elys-network/elys.git",
-		"cd $HOME/elys && git pull && git checkout " + version,
-		"cd $HOME/elys && make install",
-		"mkdir -p $HOME/.elys/cosmovisor/upgrades/" + version + "/bin",
-		"cp -a ~/go/bin/elysd ~/.elys/cosmovisor/upgrades/" + version + "/bin/elysd",
+		"cd $HOME && rm -rf " + binary,
+		"cd $HOME && git clone " + github_repo,
+		"cd $HOME/" + binary + " && git pull && git checkout " + version,
+		"cd $HOME/" + binary + " && make install",
+		"mkdir -p $HOME/." + binary +"/cosmovisor/upgrades/" + version + "/bin",
+		"cp -a ~/go/bin/" + binary + "d ~/." + binary + "/cosmovisor/upgrades/" + version + "/bin/" + binary + "d",
 	}
 
 	for _, cmdStr := range cmds {
