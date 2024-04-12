@@ -43,7 +43,7 @@ func queryProp(body []byte, r types.Release) string {
 	return status
 }
 
-func routine(t time.Time) {
+func routine(time.Time) {
 	log.Println("Fetching proposals...")
 	proposal_list := fetchProposals(props_url)
 	log.Println("Geting lates release...")
@@ -54,7 +54,7 @@ func routine(t time.Time) {
 	staged_binaries := internals.GetStagedBinaries()
 	log.Println("Cosmovisor/upgrades",staged_binaries)
 	valid_update := internals.BuildOtNotToBuilid(staged_binaries, latest_release.Tag_name, proposa_status)
-	if valid_update == false {
+	if !valid_update {
 		internals.BinaryBuild(latest_release.Tag_name)
 	} else {
 		log.Println("Binaries is aapp to date")
